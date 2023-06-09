@@ -1,0 +1,78 @@
+﻿'Option Explicit
+'Environment.Value("gloIntVarBlogName") = "Automation Repository"
+Function test1()
+	msgbox "Inside functionlib1"
+End Function
+
+Function LaunchAUT()
+	'Navigate to the AUT
+       SystemUtil.Run "C:\Program Files (x86)\Micro Focus\UFT One\samples\Flights Application\FlightsGUI.exe"
+
+End Function
+
+Function Login(strUserName,StrPassword)
+     'Enter User name
+      WpfWindow("Micro Focus MyFlight Sample").WpfEdit("agentName").Set strUserName
+     'Enter Pass word
+      WpfWindow("Micro Focus MyFlight Sample").WpfEdit("password").Set StrPassword
+     'Press OK button
+      WpfWindow("Micro Focus MyFlight Sample").WpfButton("OK").Click
+End Function
+
+Function EnterTicketDetails(strFlyFrom,strFlyTo,strPassangerName)
+	' Enter fly from
+	WpfWindow("Micro Focus MyFlight Sample").WpfComboBox("fromCity").Select(strFlyFrom)
+	'Enter fly to
+	WpfWindow("Micro Focus MyFlight Sample").WpfComboBox("toCity").Select(strFlyTo)
+	'Press Finf Flifht button
+	WpfWindow("Micro Focus MyFlight Sample").WpfButton("FIND FLIGHTS").Click
+	'Select a flight fron the grid
+	WpfWindow("Micro Focus MyFlight Sample").WpfTable("flightsDataGrid").SelectCell 1,1
+	'Press the select flight button
+	WpfWindow("Micro Focus MyFlight Sample").WpfButton("SELECT FLIGHT").Click
+	'Enter Passanger name
+	WpfWindow("Micro Focus MyFlight Sample").WpfEdit("passengerName").Set(strPassangerName)
+	'Press Order button
+	WpfWindow("Micro Focus MyFlight Sample").WpfButton("ORDER").Click
+End Function
+
+Function FetchOrderNumber()
+	'msgbox "In FetchOrderNumber"
+	Wait 3
+ 	'Reading the order message
+	strOrderMessage = WpfWindow("Micro Focus MyFlight Sample").WpfObject("Order 91 completed").GetROProperty("text")
+        FetchOrderNumber = strOrderMessage ' returning order message
+End Function
+
+Function ReturnOrderNumber()
+	strOrderMessage = DataTable.Value("OrderNumber","Global")
+	arryOrder = Split(strOrderMessage," ")
+	intOrderNumber = arryOrder(1)
+	ReturnOrderNumber = intOrderNumber
+End Function
+
+
+Function DeleteOrder(intOrderNumber)
+       Wait 3
+	'Click search
+	WpfWindow("Micro Focus MyFlight Sample").WpfTabStrip("WpfTabStrip").Select "SEARCH ORDER"
+	WpfWindow("Micro Focus MyFlight Sample").WpfRadioButton("byNumberRadio").Set
+	'enter  order number
+	WpfWindow("Micro Focus MyFlight Sample").WpfEdit("byNumberWatermark").Set intOrderNumber
+	'click search
+	WpfWindow("Micro Focus MyFlight Sample").WpfButton("SEARCH").Click
+	'Click delete
+	WpfWindow("Micro Focus MyFlight Sample").WpfButton("WpfButton_2").Click
+	'Click "ok" on pou-up
+	Wait 1
+	WpfWindow("Micro Focus MyFlight Sample").Dialog("Notification").WinButton("Yes").Click
+	'WpfWindow("Micro Focus MyFlight Sample").Move 340,436
+
+End Function
+
+
+Function LogOut()
+	'Close the application 
+	WpfWindow("Micro Focus MyFlight Sample").Close
+End Function
+

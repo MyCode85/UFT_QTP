@@ -1,0 +1,93 @@
+'using variable
+'using datatable
+'using excel
+'Template for veriables
+
+'Variable declarations
+Dim strUserName, strPass
+Dim strFlyFrom, strFlyTo
+Dim strPassengerName
+Dim strOrderMessage
+Dim intRowCount, intLoop
+Dim strExecute
+
+'Import the test Data
+DataTable.ImportSheet "C:\My_Doc\MY_UFT\Excel_Sheets\FlightAppTestDataUpdated.xlsx","FlightBookingData","Global"
+intRowCount = DataTable.GlobalSheet.GetRowCount
+'==================================================================================================
+
+
+
+
+'Ligin
+
+
+For intLoop = 1 To intRowCount
+      ' intRowCount = DataTable.GlobalSheet.GetRowCount
+	DataTable.GlobalSheet.SetCurrentRow(intLoop)
+	
+	'Get the variables
+	strUserName = trim(DataTable.Value("UserName","Global"))
+	strPassWord = trim(DataTable.Value("PassWord","Global"))
+
+	strFlyFrom = trim(DataTable.Value("FlyFrom","Global"))
+	strFlyTo = trim(DataTable.Value("FlyTo","Global"))
+	strPassangerName = trim(DataTable.Value("PassangerName","Global"))
+	strExecute = trim(DataTable.Value("Execute","Global"))
+	
+	If ucase(strExecute) = "Y" Then
+		
+	
+	
+	'Launch application under test 
+	Call LaunchAUT()
+	
+	'Login
+	Call Login(strUserName,strPassWord)
+	
+	'Enter user name
+	'WpfWindow("Micro Focus MyFlight Sample").WpfEdit("agentName").Set strUserName
+	'Enter Pass wor
+	'WpfWindow("Micro Focus MyFlight Sample").WpfEdit("password").Set strPassWord
+	'Press OK button
+ 	'WpfWindow("Micro Focus MyFlight Sample").WpfButton("OK").Click
+ 
+ 
+ 	'Entering Flight detail
+ 	
+ 	Call EnterTicketDetails(strFlyFrom,strFlyTo,strPassangerName)
+ 	' Enter fly from
+'	WpfWindow("Micro Focus MyFlight Sample").WpfComboBox("fromCity").Select(strFlyFrom)
+'	'Enter fly to
+'	WpfWindow("Micro Focus MyFlight Sample").WpfComboBox("toCity").Select(strFlyTo)
+'	'Press Finf Flifht button
+'	WpfWindow("Micro Focus MyFlight Sample").WpfButton("FIND FLIGHTS").Click
+'	'Select a flight fron the grid
+'	WpfWindow("Micro Focus MyFlight Sample").WpfTable("flightsDataGrid").SelectCell 1,1
+'	'Press the select flight button
+'	WpfWindow("Micro Focus MyFlight Sample").WpfButton("SELECT FLIGHT").Click
+'	'Enter Passanger name
+'	WpfWindow("Micro Focus MyFlight Sample").WpfEdit("passengerName").Set(strPassangerName)
+'	'Press Order button
+'	WpfWindow("Micro Focus MyFlight Sample").WpfButton("ORDER").Click
+ 
+' 	Wait 3
+' 	'Reading the order message
+        'Call  FetchOrderNumber()
+'	 strOrderMessage = WpfWindow("Micro Focus MyFlight Sample").WpfObject("Order 91 completed").GetROProperty("text")
+'        
+'        
+        'strOrderMessage = FetchOrderNumber()
+
+	'Put the order message in datatable
+	'DataTable.Value("OrderNumber","Global") = strOrderMessage
+        DataTable.Value("OrderNumber","Global") = FetchOrderNumber()
+	 Call  LogOut()
+	End If
+	
+	
+Next
+'Export the results
+DataTable.ExportSheet "C:\My_Doc\MY_UFT\TestResults\TestResult.xlsx","Global","FlightBookingData"
+
+' =======================================================================================================

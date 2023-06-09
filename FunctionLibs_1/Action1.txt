@@ -1,0 +1,81 @@
+'=====================================================================================================================================
+Option Explicit
+
+'Variable declarations
+Dim strUserName, strPass
+Dim strPassWord
+Dim strFlyFrom, strFlyTo
+Dim strPassengerName
+'Dim strOrderMessage
+Dim strExecute
+Dim intRowCount, intLoop
+Dim intOrderNumber
+'Dim arryOrder
+'=====================================================================================================================================
+'Import the test Data
+DataTable.ImportSheet "C:\My_Doc\MY_UFT\Excel_Sheets\FlightAppTestDataUpdated.xlsx","FlightBookingData","Global"
+intRowCount = DataTable.GlobalSheet.GetRowCount
+'=====================================================================================================================================
+
+For intLoop = 1 To intRowCount
+	DataTable.GlobalSheet.SetCurrentRow(intLoop)	
+	'Get the variables
+	strUserName = trim(DataTable.Value("UserName","Global"))
+	strPassWord = trim(DataTable.Value("PassWord","Global"))
+	strFlyFrom = trim(DataTable.Value("FlyFrom","Global"))
+	strFlyTo = trim(DataTable.Value("FlyTo","Global"))
+	strPassengerName = trim(DataTable.Value("PassangerName","Global"))
+	strExecute = trim(DataTable.Value("Execute","Global"))
+	
+	If ucase(strExecute) = "Y" Then
+		'Launch application under test 
+		Call LaunchAUT()	
+		'Login
+		Call Login(strUserName,strPassWord) 
+ 		'Entering Flight detail
+ 		Call EnterTicketDetails(strFlyFrom,strFlyTo,strPassengerName)
+		'Fetch and place order message in datatable
+        	DataTable.Value("OrderNumber","Global") = FetchOrderNumber()
+	 	'Call DeleteOrder(FetchOrderNumber)
+	 	
+	 	'msgbox("test")
+	 	Call  LogOut()
+             '--------------------------------------------------------------------------------------------------
+Call LaunchAUT()
+
+
+Call Login(strUserName,strPassWord) 
+
+intOrderNumber = ReturnOrderNumber()
+'strOrderMessage = DataTable.Value("OrderNumber","Global")
+'arryOrder = Split(strOrderMessage," ")
+'intOrderNumber = arryOrder(1)
+
+
+
+'Call DeleteOrder
+Call DeleteOrder(intOrderNumber)
+''Click search
+'
+'WpfWindow("Micro Focus MyFlight Sample").WpfTabStrip("WpfTabStrip").Select "SEARCH ORDER"
+'WpfWindow("Micro Focus MyFlight Sample").WpfRadioButton("byNumberRadio").Set
+''enter  order number
+'WpfWindow("Micro Focus MyFlight Sample").WpfEdit("byNumberWatermark").Set intOrderNumber
+''click search
+'WpfWindow("Micro Focus MyFlight Sample").WpfButton("SEARCH").Click
+''Click delete
+'WpfWindow("Micro Focus MyFlight Sample").WpfButton("WpfButton_2").Click
+''Click "ok" on pou-up
+'WpfWindow("Micro Focus MyFlight Sample").Dialog("Notification").WinButton("Yes").Click
+'WpfWindow("Micro Focus MyFlight Sample").Move 340,436
+Call  LogOut()
+
+
+
+
+	End If
+Next
+'=====================================================================================================================================
+'Export the results
+DataTable.ExportSheet "C:\My_Doc\MY_UFT\TestResults\TestResult.xlsx","Global","FlightBookingData"
+'=====================================================================================================================================
